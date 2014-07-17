@@ -79,3 +79,34 @@ function! FindNextDelimiter(lnum, delim, dir, ...)
     return -2
 endfunction
 
+" Looks for a class or function declaration that could have opened the current fold region.
+" This is only matters between the declaration and the opening curly, so return error if a curly is found first.
+" While this could be done with FindNextDelimiter(), this has a default limit of 10 as there shouldn't ever be more
+" than number of implements or arguments
+function! FindPrevClassFunc(lnum, ...)
+    let current = a:lnum
+
+    " If the limit given is out range, pretend it's 10.
+    if a:0 == 0 || a:1 < 1 || a:1 > 10
+        let stopLine = current - 10
+    else
+        let stopLine = current - a:1
+    endif
+
+    " If there aren't enough lines above the current line, set the end to the first line
+    if stopLine < 1
+        let stopLine = 1
+    endif
+
+    while current >= stopLine
+        if getline(current) =~? '{'
+            return -2
+        elseif getline(current) =~? '\v^\s*(class|(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function)\s+\k'
+            return current
+        endif
+
+        let current -= 1
+    endwhile
+
+    return -2
+endfunction
