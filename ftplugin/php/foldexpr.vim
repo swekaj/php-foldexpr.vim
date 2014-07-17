@@ -55,6 +55,13 @@ function! GetPhpFold(lnum)
         return '='
     endif
 
+    " If the line has an open ( ) or [ ] pair, it probably starts a fold
+    if line =~? '\v(\(|\[)[^\)\]]*$'
+        return '>' . IndentLevel(a:lnum+1)
+    elseif line =~? '\v^[\(\[]*(\)|\])'
+        return '<' . IndentLevel(a:lnum-1)
+    endif
+
     return IndentLevel(a:lnum)
 endfunction
 
