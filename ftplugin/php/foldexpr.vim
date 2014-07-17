@@ -10,6 +10,15 @@ function! GetPhpFold(lnum)
         return '='
     endif
 
+    " Fold blocks of 'use' statements that have no indentation.
+    " i.e. namespace imports
+    if line =~? '\v^use\s+' && getline(a:lnum+1) =~? '\v^(use\s+)@!'
+        " Stop the fold at the last use statement.
+        return '<1'
+    elseif line =~? '\v^use\s+'
+        return '1'
+    endif
+
     return IndentLevel(a:lnum)
 endfunction
 
