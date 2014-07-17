@@ -19,6 +19,22 @@ function! GetPhpFold(lnum)
         return '1'
     endif
 
+    " handle classes, class methods, and independent functions
+    if line =~? '\v^\s*(class|(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function)\s+\k'
+        " The code inside the class or function determines the fold level, 
+        " and it starts after the curly.  However, the curly may not always 
+        " be right after the class or function declaration, so search for it.
+        let nextCurly = FindNextDelimiter(a:lnum, '{', 'f')
+        return '>' . IndentLevel(nextnonblank(nextCurly + 1))
+    elseif line =~? '{'
+        " The fold level of the curly is determined by the next non-blank line
+        return IndentLevel(nextnonblank(a:lnum + 1))
+    elseif line =~? '\v}'
+        " The fold level the closing curly closes is determined by the previous non-blank line
+        " But only if not followed by an else, catch, or finally
+        return '<' . IndentLevel(prevnonblank(a:lnum-1))
+    endif
+
     return IndentLevel(a:lnum)
 endfunction
 
