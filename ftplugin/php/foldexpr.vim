@@ -29,10 +29,16 @@ function! GetPhpFold(lnum)
     elseif line =~? '{'
         " The fold level of the curly is determined by the next non-blank line
         return IndentLevel(nextnonblank(a:lnum + 1))
-    elseif line =~? '\v}'
+    elseif line =~? '\v}(\s*(else|catch|finally))@!'
         " The fold level the closing curly closes is determined by the previous non-blank line
         " But only if not followed by an else, catch, or finally
         return '<' . IndentLevel(prevnonblank(a:lnum-1))
+    endif
+
+    " If the next line is followed by an opening else, catch, or finally statement, then this 
+    " line closes the current fold so that the else/catch/finally can open a new one.
+    if getline(a:lnum+1) =~? '\v}\s*(else|catch|finally)'
+        return '<' . IndentLevel(a:lnum)
     endif
 
     " Cause indented multi-line comments (/* */) to be folded.
