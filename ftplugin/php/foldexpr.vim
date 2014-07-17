@@ -25,3 +25,41 @@ endfunction
 function! IndentLevel(lnum)
     return indent(a:lnum) / &shiftwidth
 endfunction
+
+function! FindNextDelimiter(lnum, delim, dir, ...)
+    let current = a:lnum
+    " searching forward with limit
+    if a:dir == 'f' && a:0 > 0
+        let stopLine = current + a:1
+    " searching forward without limit
+    elseif a:dir == 'f'
+        let stopLine = line('$')
+    " searching backward with limit
+    elseif a:dir == 'b' && a:0 > 0
+        let stopLine = current - a:1
+    " searching backward without limit
+    elseif a:dir == 'b'
+        let stopLine = 1
+    " searching unknown direction, error.
+    else
+        return -2
+    endif
+
+
+    if a:0 > 0
+        let limit = current + a:1
+    else
+        let limit = stopLine
+    endif
+
+    while current <= limit
+        if getline(current) =~? a:delim
+            return current
+        endif
+
+        let current += 1
+    endwhile
+
+    return -2
+endfunction
+
