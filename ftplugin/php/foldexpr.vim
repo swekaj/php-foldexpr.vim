@@ -35,6 +35,13 @@ function! GetPhpFold(lnum)
         return '<' . IndentLevel(prevnonblank(a:lnum-1))
     endif
 
+    " Cause indented multi-line comments (/* */) to be folded.
+    if line =~? '\v/\*'
+        return '>'.IndentLevel(a:lnum)
+    elseif line =~? '\v\*/'
+        return '<' . IndentLevel(a:lnum-1)
+    endif
+
     let prevClassFunc = FindPrevClassFunc(a:lnum)
     if a:lnum - prevClassFunc == 1
         return 'a1'
