@@ -35,6 +35,13 @@ function! GetPhpFold(lnum)
         return '<' . IndentLevel(prevnonblank(a:lnum-1))
     endif
 
+    let prevClassFunc = FindPrevClassFunc(a:lnum)
+    if a:lnum - prevClassFunc == 1
+        return 'a1'
+    elseif prevClassFunc > 0
+        return '='
+    endif
+
     return IndentLevel(a:lnum)
 endfunction
 
