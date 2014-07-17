@@ -4,6 +4,8 @@ setlocal foldexpr=GetPhpFold(v:lnum)
 function! GetPhpFold(lnum)
     let line = getline(a:lnum)
 
+    return IndentLevel(a:lnum)
+
 endfunction
 
 function! IndentLevel(lnum)
