@@ -20,7 +20,7 @@ function! GetPhpFold(lnum)
     endif
 
     " handle classes, class methods, and independent functions
-    if line =~? '\v^\s*(class|(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function)\s+\k'
+    if line =~? '\v(^\s*class|\s*(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function)\s+(\k|\()'
         " The code inside the class or function determines the fold level, 
         " and it starts after the curly.  However, the curly may not always 
         " be right after the class or function declaration, so search for it.
@@ -48,9 +48,13 @@ function! GetPhpFold(lnum)
         return '<' . IndentLevel(a:lnum-1)
     endif
 
+    " Increase the foldlevel by 1 for function and closure arguments and use vars that are on
+    " multiple lines.
     let prevClassFunc = FindPrevClassFunc(a:lnum)
-    if a:lnum - prevClassFunc == 1
+    if prevClassFunc > 0 && getline(a:lnum-1) =~? '\v\([^\)]*$'
         return 'a1'
+    elseif prevClassFunc > 0 && getline(a:lnum+1) =~? '\v^\s*[^\(]*\)'
+        return 's1'
     elseif prevClassFunc > 0
         return '='
     endif
@@ -58,7 +62,7 @@ function! GetPhpFold(lnum)
     " If the line has an open ( ) or [ ] pair, it probably starts a fold
     if line =~? '\v(\(|\[)[^\)\]]*$'
         return '>' . IndentLevel(a:lnum+1)
-    elseif line =~? '\v^[\(\[]*(\)|\])'
+    elseif line =~? '\v^\s*[\(\[]*(\)|\])'
         return '<' . IndentLevel(a:lnum-1)
     endif
 
@@ -128,7 +132,7 @@ function! FindPrevClassFunc(lnum, ...)
     while current >= stopLine
         if getline(current) =~? '{'
             return -2
-        elseif getline(current) =~? '\v^\s*(class|(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function)\s+\k'
+        elseif getline(current) =~? '\v(^\s*class|\s*(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function)\s+(\k|\()'
             return current
         endif
 
