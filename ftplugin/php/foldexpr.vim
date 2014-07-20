@@ -32,7 +32,7 @@ function! GetPhpFold(lnum)
     elseif line =~? '\v}(\s*(else|catch|finally))@!'
         " The fold level the closing curly closes is determined by the previous non-blank line
         " But only if not followed by an else, catch, or finally
-        return '<' . IndentLevel(prevnonblank(a:lnum-1))
+        return '<' . (IndentLevel(a:lnum)+1)
     endif
 
     " If the next line is followed by an opening else, catch, or finally statement, then this 
