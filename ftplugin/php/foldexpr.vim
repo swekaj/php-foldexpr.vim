@@ -66,6 +66,17 @@ function! GetPhpFold(lnum)
         return '<' . IndentLevel(a:lnum-1)
     endif
 
+    " Fold switch case and default blocks together
+    if line =~? '\v^\s*default:'
+        return '>' . (IndentLevel(a:lnum)+1)
+    elseif line =~? '\v^\s*case\s*.*:'
+        if  getline(a:lnum-1) !~? '\v^\s*case\s*.*:' 
+            return '>' .(IndentLevel(a:lnum)+1)
+        else
+            return IndentLevel(a:lnum)+1
+        endif
+    endif
+
     return IndentLevel(a:lnum)
 endfunction
 
