@@ -48,10 +48,12 @@ function! GetPhpFold(lnum)
     endif
 
     " Cause indented multi-line comments (/* */) to be folded.
-    if line =~? '\v/\*'
-        return '>'.IndentLevel(a:lnum)
-    elseif line =~? '\v\*/'
-        return '<' . IndentLevel(a:lnum-1)
+    if line =~? '\v^\s*/\*'
+        return '>'.(IndentLevel(a:lnum)+1)
+    elseif line =~? '\v^\s*\*'
+        return IndentLevel(a:lnum)+1
+    elseif line =~? '\v^\s*\*/'
+        return '<' . (IndentLevel(a:lnum)+1)
     endif
 
     " Increase the foldlevel by 1 for function and closure arguments and use vars that are on
