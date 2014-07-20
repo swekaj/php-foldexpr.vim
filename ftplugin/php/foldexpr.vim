@@ -4,6 +4,9 @@ setlocal foldexpr=GetPhpFold(v:lnum)
 if !exists('b:phpfold_use')
     let b:phpfold_use = 1
 endif
+if !exists('b:phpfold_group_iftry')
+    let b:phpfold_group_iftry = 0
+endif
 
 function! GetPhpFold(lnum)
     let line = getline(a:lnum)
@@ -41,10 +44,12 @@ function! GetPhpFold(lnum)
         return '<' . (IndentLevel(a:lnum)+1)
     endif
 
-    " If the next line is followed by an opening else, catch, or finally statement, then this 
-    " line closes the current fold so that the else/catch/finally can open a new one.
-    if getline(a:lnum+1) =~? '\v}\s*(else|catch|finally)'
-        return '<' . IndentLevel(a:lnum)
+    if !b:phpfold_group_iftry
+        " If the next line is followed by an opening else, catch, or finally statement, then this 
+        " line closes the current fold so that the else/catch/finally can open a new one.
+        if getline(a:lnum+1) =~? '\v}\s*(else|catch|finally)'
+            return '<' . IndentLevel(a:lnum)
+        endif
     endif
 
     " Cause indented multi-line comments (/* */) to be folded.
@@ -68,8 +73,13 @@ function! GetPhpFold(lnum)
     endif
 
     " If the line has an open ( ) or [ ] pair, it probably starts a fold
-    if line =~? '\v(\(|\[)[^\)\]]*$'
-        return '>' . IndentLevel(a:lnum+1)
+    if line =~? '\v(\(|\[)[^\)\]]*$' 
+        if b:phpfold_group_iftry && line =~? '\v}\s*(elseif|catch)'
+            " But don't start a fold if we're grouping if/elseif/else and try/catch
+            return IndentLevel(a:lnum)+1
+        else
+            return '>' . IndentLevel(a:lnum+1)
+        endif
     elseif line =~? '\v^\s*[\(\[]*(\)|\])'
         return '<' . IndentLevel(a:lnum-1)
     endif
