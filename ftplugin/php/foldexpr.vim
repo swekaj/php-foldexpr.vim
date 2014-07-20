@@ -1,6 +1,10 @@
 setlocal foldmethod=expr
 setlocal foldexpr=GetPhpFold(v:lnum)
 
+if !exists('b:phpfold_use')
+    let b:phpfold_use = 1
+endif
+
 function! GetPhpFold(lnum)
     let line = getline(a:lnum)
 
@@ -10,13 +14,15 @@ function! GetPhpFold(lnum)
         return '='
     endif
 
-    " Fold blocks of 'use' statements that have no indentation.
-    " i.e. namespace imports
-    if line =~? '\v^use\s+' && getline(a:lnum+1) =~? '\v^(use\s+)@!'
-        " Stop the fold at the last use statement.
-        return '<1'
-    elseif line =~? '\v^use\s+'
-        return '1'
+    if b:phpfold_use
+        " Fold blocks of 'use' statements that have no indentation.
+        " i.e. namespace imports
+        if line =~? '\v^use\s+' && getline(a:lnum+1) =~? '\v^(use\s+)@!'
+            " Stop the fold at the last use statement.
+            return '<1'
+        elseif line =~? '\v^use\s+'
+            return '1'
+        endif
     endif
 
     " handle classes, class methods, and independent functions
