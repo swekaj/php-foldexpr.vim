@@ -7,6 +7,9 @@ endif
 if !exists('b:phpfold_group_iftry')
     let b:phpfold_group_iftry = 0
 endif
+if !exists('b:phpfold_group_args')
+    let b:phpfold_group_args = 1
+endif
 
 function! GetPhpFold(lnum)
     let line = getline(a:lnum)
@@ -61,15 +64,17 @@ function! GetPhpFold(lnum)
         return '<' . (IndentLevel(a:lnum)+1)
     endif
 
-    " Increase the foldlevel by 1 for function and closure arguments and use vars that are on
-    " multiple lines.
-    let prevClassFunc = FindPrevClassFunc(a:lnum)
-    if prevClassFunc > 0 && getline(a:lnum-1) =~? '\v\([^\)]*$'
-        return 'a1'
-    elseif prevClassFunc > 0 && getline(a:lnum+1) =~? '\v^\s*[^\(]*\)'
-        return 's1'
-    elseif prevClassFunc > 0
-        return '='
+    if b:phpfold_group_args
+        " Increase the foldlevel by 1 for function and closure arguments and use vars that are on
+        " multiple lines.
+        let prevClassFunc = FindPrevClassFunc(a:lnum)
+        if prevClassFunc > 0 && getline(a:lnum-1) =~? '\v\([^\)]*$'
+            return 'a1'
+        elseif prevClassFunc > 0 && getline(a:lnum+1) =~? '\v^\s*[^\(]*\)'
+            return 's1'
+        elseif prevClassFunc > 0
+            return '='
+        endif
     endif
 
     " If the line has an open ( ) or [ ] pair, it probably starts a fold
