@@ -1,3 +1,19 @@
+" Vim folding via fold-expr
+" Language: PHP
+"
+" Maintainer: Jake Soward <swekaj@gmail.com>
+"
+" Options: 
+"           b:phpfold_use = 1         - Fold groups of use statements in the global scope.
+"           b:phpfold_group_iftry = 0 - Fold if/elseif/else and try/catch/finally
+"                                       blocks as a group, rather than each part separate.
+"           b:phpfold_group_args = 1  - Group function arguments split across multiple
+"                                       lines into their own fold.
+"           b:phpfold_group_case = 1  - Fold case and default blocks inside switches.
+"
+" Known Bugs:
+"  - In switch statements, the closing } is included in the fold of the last case or 
+"    default block.
 setlocal foldmethod=expr
 setlocal foldexpr=GetPhpFold(v:lnum)
 
