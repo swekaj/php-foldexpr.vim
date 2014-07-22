@@ -54,10 +54,10 @@ function! GetPhpFold(lnum)
         " be right after the class or function declaration, so search for it.
         let nextCurly = FindNextDelimiter(a:lnum, '{', 'f')
         return '>' . IndentLevel(nextnonblank(nextCurly + 1))
-    elseif line =~? '{'
+    elseif line =~? '{' && !IsInComment(a:lnum, '{')
         " The fold level of the curly is determined by the next non-blank line
         return IndentLevel(nextnonblank(a:lnum + 1))
-    elseif line =~? '\v}(\s*(else|catch|finally))@!'
+    elseif line =~? '\v}(\s*(else|catch|finally))@!' && !IsInComment(a:lnum, '}')
         " The fold level the closing curly closes is determined by the previous non-blank line
         " But only if not followed by an else, catch, or finally
         return '<' . (IndentLevel(a:lnum)+1)
@@ -74,7 +74,7 @@ function! GetPhpFold(lnum)
     " Cause indented multi-line comments (/* */) to be folded.
     if line =~? '\v^\s*/\*'
         return '>'.(IndentLevel(a:lnum)+1)
-    elseif line =~? '\v^\s*\*'
+    elseif line =~? '\v^\s*\*/@!'
         return IndentLevel(a:lnum)+1
     elseif line =~? '\v^\s*\*/'
         return '<' . (IndentLevel(a:lnum)+1)
@@ -190,4 +190,19 @@ function! FindPrevClassFunc(lnum, ...)
     endwhile
 
     return -2
+endfunction
+
+" Detects whether the given char on the given line is in comment or not.
+function! IsInComment(lnum, char)
+    let line = getline(a:lnum)
+    let contained = 0
+    let pos = match(line, '\c'.a:char)
+    while pos >= 0
+        let hlName = synIDattr(synIDtrans(synID(a:lnum, pos, 0)), 'name')
+        if hlName == 'Comment'
+            let contained = 1
+        endif
+        let pos = match(line, '\c'.a:char, pos+1)
+    endwhile
+    return contained
 endfunction
