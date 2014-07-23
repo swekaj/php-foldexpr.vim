@@ -52,7 +52,7 @@ function! GetPhpFold(lnum)
         " The code inside the class or function determines the fold level, 
         " and it starts after the curly.  However, the curly may not always 
         " be right after the class or function declaration, so search for it.
-        let nextCurly = FindNextDelimiter(a:lnum, '{', 'f')
+        let nextCurly = FindNextDelimiter(a:lnum, '{')
         return '>' . IndentLevel(nextnonblank(nextCurly + 1))
     elseif line =~? '\v^\s*\*@!.*\{'
         " The fold level of the curly is determined by the next non-blank line
@@ -123,30 +123,12 @@ function! IndentLevel(lnum)
     return indent(a:lnum) / &shiftwidth
 endfunction
 
-function! FindNextDelimiter(lnum, delim, dir, ...)
+function! FindNextDelimiter(lnum, delim, ...)
     let current = a:lnum
-    " searching forward with limit
-    if a:dir == 'f' && a:0 > 0
-        let stopLine = current + a:1
-    " searching forward without limit
-    elseif a:dir == 'f'
-        let stopLine = line('$')
-    " searching backward with limit
-    elseif a:dir == 'b' && a:0 > 0
-        let stopLine = current - a:1
-    " searching backward without limit
-    elseif a:dir == 'b'
-        let stopLine = 1
-    " searching unknown direction, error.
-    else
-        return -2
-    endif
-
-
     if a:0 > 0
         let limit = current + a:1
     else
-        let limit = stopLine
+        let limit = line('$')
     endif
 
     while current <= limit
@@ -155,6 +137,25 @@ function! FindNextDelimiter(lnum, delim, dir, ...)
         endif
 
         let current += 1
+    endwhile
+
+    return -2
+endfunction
+
+function! FindPrevDelimiter(lnum, delim, ...)
+    let current = a:lnum
+    if a:0 > 0
+        let limit = current - a:1
+    else
+        let limit = 1
+    endif
+
+    while current >= limit
+        if getline(current) =~? a:delim
+            return current
+        endif
+
+        let current -= 1
     endwhile
 
     return -2
