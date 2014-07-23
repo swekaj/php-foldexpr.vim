@@ -11,6 +11,7 @@
 "                                       lines into their own fold.
 "           b:phpfold_group_case = 1  - Fold case and default blocks inside switches.
 "           b:phpfold_heredocs = 1     - Fold HEREDOCs and NOWDOCs.
+"           b:phpfold_docblocks = 1    - Fold DocBlocks.
 "
 " Known Bugs:
 "  - In switch statements, the closing } is included in the fold of the last case or 
@@ -29,6 +30,9 @@ if !exists('b:phpfold_group_args')
 endif
 if !exists('b:phpfold_heredocs')
     let b:phpfold_heredocs = 1
+endif
+if !exists('b:phpfold_docblocks')
+    let b:phpfold_docblocks = 1
 endif
 
 function! GetPhpFold(lnum)
@@ -75,13 +79,15 @@ function! GetPhpFold(lnum)
         endif
     endif
 
-    " Cause indented multi-line comments (/* */) to be folded.
-    if line =~? '\v^\s*/\*'
-        return '>'.(IndentLevel(a:lnum)+1)
-    elseif line =~? '\v^\s*\*/@!'
-        return IndentLevel(a:lnum)+1
-    elseif line =~? '\v^\s*\*/'
-        return '<' . (IndentLevel(a:lnum)+1)
+    if b:phpfold_docblocks
+        " Cause indented multi-line comments (/* */) to be folded.
+        if line =~? '\v^\s*/\*'
+            return '>'.(IndentLevel(a:lnum)+1)
+        elseif line =~? '\v^\s*\*/@!'
+            return IndentLevel(a:lnum)+1
+        elseif line =~? '\v^\s*\*/'
+            return '<' . (IndentLevel(a:lnum)+1)
+        endif
     endif
 
     if b:phpfold_group_args
