@@ -10,6 +10,7 @@
 "           b:phpfold_group_args = 1  - Group function arguments split across multiple
 "                                       lines into their own fold.
 "           b:phpfold_group_case = 1  - Fold case and default blocks inside switches.
+"           b:phpfold_heredocs = 1     - Fold HEREDOCs and NOWDOCs.
 "
 " Known Bugs:
 "  - In switch statements, the closing } is included in the fold of the last case or 
@@ -25,6 +26,9 @@ if !exists('b:phpfold_group_iftry')
 endif
 if !exists('b:phpfold_group_args')
     let b:phpfold_group_args = 1
+endif
+if !exists('b:phpfold_heredocs')
+    let b:phpfold_heredocs = 1
 endif
 
 function! GetPhpFold(lnum)
@@ -116,6 +120,30 @@ function! GetPhpFold(lnum)
         endif
     endif
 
+    if b:phpfold_heredocs
+        " Fold the here and now docs
+        if line =~? "<<<[a-zA-Z_][a-zA-Z0-9_]*$"
+            return '>'.(IndentLevel(a:lnum)+1)
+        elseif line =~? "<<<'[a-zA-Z_][a-zA-Z0-9_]*'$"
+            return '>'.(IndentLevel(a:lnum)+1)
+        elseif line =~? "^[a-zA-Z_][a-zA-Z0-9_]*;$"
+            " heredocs and now docs end the same way, so we have to check for both starts and see which 
+            " appeared latest in the file.  We then assume that one opened the fold.
+            let heredoc = FindPrevDelimiter(a:lnum-1, '<<<'.strpart(line, 0, strlen(line)-1))
+            let nowdoc = FindPrevDelimiter(a:lnum-1, "<<<'".strpart(line, 0, strlen(line)-1)."'")
+            let startLine = -1
+            if heredoc > nowdoc
+                let startLine = heredoc
+            elseif nowdoc > heredoc
+                let startLine = nowdoc
+            endif
+            if startLine >= 0
+                return '<'.(IndentLevel(startLine)+1)
+            endif
+        endif
+    endif
+
+    return '='
     return IndentLevel(a:lnum)
 endfunction
 
