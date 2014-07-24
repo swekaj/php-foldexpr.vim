@@ -4,14 +4,15 @@
 " Maintainer: Jake Soward <swekaj@gmail.com>
 "
 " Options: 
-"           b:phpfold_use = 1         - Fold groups of use statements in the global scope.
-"           b:phpfold_group_iftry = 0 - Fold if/elseif/else and try/catch/finally
-"                                       blocks as a group, rather than each part separate.
-"           b:phpfold_group_args = 1  - Group function arguments split across multiple
-"                                       lines into their own fold.
-"           b:phpfold_group_case = 1  - Fold case and default blocks inside switches.
-"           b:phpfold_heredocs = 1     - Fold HEREDOCs and NOWDOCs.
-"           b:phpfold_docblocks = 1    - Fold DocBlocks.
+"           b:phpfold_use = 1            - Fold groups of use statements in the global scope.
+"           b:phpfold_group_iftry = 0    - Fold if/elseif/else and try/catch/finally
+"                                          blocks as a group, rather than each part separate.
+"           b:phpfold_group_args = 1     - Group function arguments split across multiple
+"                                          lines into their own fold.
+"           b:phpfold_group_case = 1     - Fold case and default blocks inside switches.
+"           b:phpfold_heredocs = 1       - Fold HEREDOCs and NOWDOCs.
+"           b:phpfold_docblocks = 1      - Fold DocBlocks.
+"           b:phpfold_doc_with_funcs = 1 - Fold DocBlocks. Overrides b:phpfold_docblocks.
 "
 " Known Bugs:
 "  - In switch statements, the closing } is included in the fold of the last case or 
@@ -32,6 +33,14 @@ if !exists('b:phpfold_heredocs')
     let b:phpfold_heredocs = 1
 endif
 if !exists('b:phpfold_docblocks')
+    let b:phpfold_docblocks = 1
+endif
+if !exists('b:phpfold_doc_with_funcs')
+    let b:phpfold_doc_with_funcs = 1
+endif
+
+" If we want to fold functions with their blocks, we have to fold the blocks.
+if b:phpfold_doc_with_funcs
     let b:phpfold_docblocks = 1
 endif
 
@@ -55,8 +64,16 @@ function! GetPhpFold(lnum)
         endif
     endif
 
-    " handle classes, class methods, and independent functions
-    if line =~? '\v(^\s*class|\s*(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function)\s+(\k|\()'
+    " handle class methods and independent functions
+    if line =~? '\v\s*(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function\s+(\k|\()'
+        if b:phpfold_doc_with_funcs
+            return IndentLevel(a:lnum)+1
+        else
+            return '>'.(IndentLevel(a:lnum)+1)
+        endif
+    endif
+
+    if line =~? '\v^\s*class\s*\k'
         " The code inside the class or function determines the fold level, 
         " and it starts after the curly.  However, the curly may not always 
         " be right after the class or function declaration, so search for it.
@@ -86,7 +103,11 @@ function! GetPhpFold(lnum)
         elseif line =~? '\v^\s*\*/@!'
             return IndentLevel(a:lnum)+1
         elseif line =~? '\v^\s*\*/'
-            return '<' . (IndentLevel(a:lnum)+1)
+            if b:phpfold_doc_with_funcs && getline(a:lnum+1) =~?  '\v\s*(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function\s+(\k|\()'
+                return IndentLevel(a:lnum)+1
+            else
+                return '<' . (IndentLevel(a:lnum)+1)
+            endif
         endif
     endif
 
