@@ -98,7 +98,7 @@ function! GetPhpFold(lnum)
 
     if b:phpfold_docblocks
         " Cause indented multi-line comments (/* */) to be folded.
-        if line =~? '\v^\s*/\*\*'
+        if line =~? '\v^\s*/\*\*' && line !~? '\*/'
             return '>'.(IndentLevel(a:lnum)+1)
         elseif line =~? '\v^\s*\*/@!' && IsDocBlock(a:lnum-1)
             return IndentLevel(a:lnum)+1
