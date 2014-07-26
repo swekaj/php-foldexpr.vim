@@ -79,7 +79,7 @@ function! GetPhpFold(lnum)
         " be right after the class or function declaration, so search for it.
         let nextCurly = FindNextDelimiter(a:lnum, '{')
         return '>' . IndentLevel(nextnonblank(nextCurly + 1))
-    elseif line =~? '\v^\s*\*@!.*\{'
+    elseif line =~? '{' && line !~? '\v^\s*\*'
         " The fold level of the curly is determined by the next non-blank line
         return IndentLevel(a:lnum) + 1
     elseif line =~? '\v^\s*\*@!\}(\s*(else|catch|finally))@!'
@@ -98,9 +98,9 @@ function! GetPhpFold(lnum)
 
     if b:phpfold_docblocks
         " Cause indented multi-line comments (/* */) to be folded.
-        if line =~? '\v^\s*/\*'
+        if line =~? '\v^\s*/\*\*'
             return '>'.(IndentLevel(a:lnum)+1)
-        elseif line =~? '\v^\s*\*/@!'
+        elseif line =~? '\v^\s*\*/@!' && IsDocBlock(a:lnum-1)
             return IndentLevel(a:lnum)+1
         elseif line =~? '\v^\s*\*/'
             if b:phpfold_doc_with_funcs && getline(a:lnum+1) =~?  '\v\s*(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function\s+(\k|\()'
@@ -246,4 +246,20 @@ function! FindPrevClassFunc(lnum, ...)
     endwhile
 
     return -2
+endfunction
+
+function! IsDocBlock(lnum)
+    let current = a:lnum
+    while current >= 0
+        let cline = getline(current)
+        if cline =~? '\v^\s*/\*\*'
+            return 1
+        elseif cline !~? '\v^\s*\*'
+            return 0
+        endif
+
+        let current -= 1
+    endwhile
+
+    return 0
 endfunction
