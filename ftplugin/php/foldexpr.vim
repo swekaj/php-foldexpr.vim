@@ -65,12 +65,16 @@ function! GetPhpFold(lnum)
     endif
 
     " handle class methods and independent functions
-    if line =~? '\v\s*(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function\s+(\k|\()'
+    if line =~? '\v\s*(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function\s+(\k|\()' && line !~? ';$'
         if b:phpfold_doc_with_funcs
             return IndentLevel(a:lnum)+1
         else
             return '>'.(IndentLevel(a:lnum)+1)
         endif
+    endif
+
+    if line =~? '\vfunction\s+(\k|\().*;$'
+        return '<'.(IndentLevel(a:lnum)+1)
     endif
 
     if line =~? '\v^\s*class\s*\k'
