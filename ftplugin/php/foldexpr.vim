@@ -130,10 +130,10 @@ function! GetPhpFold(lnum)
             " But don't start a fold if we're grouping if/elseif/else and try/catch
             return IndentLevel(a:lnum)+1
         else
-            return '>' . IndentLevel(a:lnum+1)
+            return '>' . (IndentLevel(a:lnum)+1)
         endif
     elseif line =~? '\v^\s*[\(\[]*(\)|\])'
-        return '<' . IndentLevel(a:lnum-1)
+        return '<' . (IndentLevel(a:lnum)+1)
     endif
 
     " Fold switch case and default blocks together
