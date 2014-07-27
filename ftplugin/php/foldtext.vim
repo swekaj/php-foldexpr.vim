@@ -16,7 +16,7 @@ function! GetPhpFoldText()
     let line = getline(v:foldstart)
 
     " Start off with the normal, the fold-level dashes and number of lines in the fold.
-    let text = v:folddashes . ' ' . (v:foldend-v:foldstart+1) . ' lines: '
+    let text = '+' . v:folddashes . ' ' . (v:foldend-v:foldstart+1) . ' lines: '
 
     if line =~? '\v^\s*/\*\*?\s*$' " Comments
         " If the DocBlocks are being folded with the function they document, include the function signature in the foldtext.
