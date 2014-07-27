@@ -85,6 +85,18 @@ function! GetPhpFoldText()
             let cline += 1
         endwhile
         let text = substitute(text, ', $', '', '')
+    elseif line =~? '\v^\s*class\s*\k'
+        let text .= substitute(line, '^\s*', '', '')
+        if line =~? '\vimplements\s*$'
+            let cline = v:foldstart+1
+            let line = getline(cline)
+            while line !~? '\v^\s*\{'
+                let text .= substitute(line, '^\s*', ' ', '')
+                let cline += 1
+                let line = getline(cline)
+            endwhile
+        endif
+        let text .= ' {...}'
     elseif line =~? '\v^\s*case\s*.*:'
         " If there are multiple case statements in a row, display them all in a list
         let cline = v:foldstart
