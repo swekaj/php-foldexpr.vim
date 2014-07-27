@@ -77,7 +77,7 @@ function! GetPhpFold(lnum)
         return '<'.(IndentLevel(a:lnum)+1)
     endif
 
-    if line =~? '\v^\s*class\s*\k'
+    if line =~? '\v^\s*class\s+\k'
         " The code inside the class or function determines the fold level, 
         " and it starts after the curly.  However, the curly may not always 
         " be right after the class or function declaration, so search for it.
