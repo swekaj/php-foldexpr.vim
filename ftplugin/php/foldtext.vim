@@ -43,7 +43,7 @@ function! GetPhpFoldText()
             let text .= substitute(getline(cline), '\v^\s*([^,]+,?).*', '\1 ', '')
             let cline += 1
         endwhile
-    elseif line =~? '\v\s+function\s+\(' " Closures
+    elseif line =~? '\v\Wfunction\s+\(' " Closures
         " Start with the line save the indent spacing.
         let text .= substitute(line, '\v^\s*', '\1', '')
         let text .= '...'
@@ -58,26 +58,24 @@ function! GetPhpFoldText()
         "   -- 13 lines: $closure = function ($arg1) use (...) {...}-----
         if line =~? '\v\)\s+use\s+\([^)]*$'
             " Arg list is on one line, use list is not.
-            let text .= ') {...}'
+            let text .= ') {...'
         elseif FuncHasUse(v:foldstart+1) > 0
             " Arg lsit is on multiple lines and there is a use list.
             let uline = getline(FuncHasUse(v:foldstart+1))
             " If the use list is on multiple lines, display (...) for it, otherwise display the list
             if uline =~? '\vuse\s+\([^)]+\) \{'
-                let text .= substitute(uline, '\v^.*\)\s+use\s+(\([^)]+\)\s*\{)', ') use \1...}', '')
+                let text .= substitute(uline, '\v^.*\)\s+use\s+(\([^)]+\)\s*\{)', ') use \1...', '')
             else
-                let text .= ') use (...) {...}'
+                let text .= ') use (...) {...'
             endif
-        elseif line =~? '\v\(\) \{\s*$'
-            " There is no use list and no arguments
-            let text .= '}'
-        elseif line =~? '\vuse\s+\([^)]+\)\s+\{\s*$'
-            " The arg list (if present) and use list are both on one line
-            let text .= '}'
+        elseif line =~? '\v\(\) \{\s*$' || line =~? '\vuse\s+\([^)]+\)\s+\{\s*$'
+            " The arg list (if present) and use list are both on one line or there is no use list and no arguments
+            let text .= ''
         else
             " The arg list is on multiple lines and there is no use list
-            let text .= ') {...}'
+            let text .= ') {...'
         endif
+        let text .= ExtractEndDelim(v:foldend)
     elseif line =~? '\v^use\s+'
         " Display the last part of each namespace import/alias in a list
         let text .= 'use '
@@ -139,7 +137,7 @@ endfunction
 
 " Extracts the last delimiter(s) of the line.
 function! ExtractEndDelim(lnum)
-    return matchstr(getline(a:lnum), '\v^[^\]})]*\zs[\]})]+\ze.*$')
+    return matchstr(getline(a:lnum), '\v^[^\]})]*\zs[\]})]+;?\ze.*$')
 endfunction
 
 " Determines if the function in the fold region has a use list, and returns where the use keyword is located.
