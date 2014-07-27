@@ -71,7 +71,7 @@ class ClassName extends ParentClass implements
 
 *With the default fold text:*
 ```
-+-- 7 lines: class ClassName extends ParentClass implements---
++--  7 lines: class ClassName extends ParentClass implements---
 ```
 
 *With the plugin's fold text:*
@@ -234,20 +234,20 @@ The `switch` statement is folded as a whole, with each `case` block in its own f
 ```
 switch ($expr) {
     case 0:
-    ¦   echo 'First case, with a break';
-    ¦   break;
+        echo 'First case, with a break';
+        break;
     case 0.5:
     case 1:
-    ¦   echo 'Second case, which falls through';
-    ¦   // no break
+        echo 'Second case, which falls through';
+        // no break
     case 2:
     case 3:
     case 4:
-    ¦   echo 'Third case, return instead of break';
-    ¦   return;
+        echo 'Third case, return instead of break';
+        return;
     default:
-    ¦   echo 'Default case';
-    ¦   break;
+        echo 'Default case';
+        break;
 }
 ```
 
@@ -267,20 +267,20 @@ switch ($expr) {
 ```
 switch ($expr) {                                    
     case 0:                                         
-    ¦   echo 'First case, with a break';            
-    ¦   break;                                      
+        echo 'First case, with a break';            
+        break;                                      
     case 0.5:                                       
     case 1:                                         
-    ¦   echo 'Second case, which falls through';    
-    ¦   // no break                                 
+        echo 'Second case, which falls through';    
+        // no break                                 
     case 2:                                         
     case 3:                                         
     case 4:                                         
-    ¦   echo 'Third case, return instead of break'; 
-    ¦   return;                                     
+        echo 'Third case, return instead of break'; 
+        return;                                     
     default:                                        
-    ¦   echo 'Default case';                        
-    ¦   break;                                      
+        echo 'Default case';                        
+        break;                                      
 }                                                   
 ```
 
@@ -321,7 +321,7 @@ do {
 ```
 +--  3 lines: while ($expr) {---
 
-+-- 3 lines: do {---------------
++--  3 lines: do {---------------
 ```
 
 *With the plugin's fold text:*
@@ -342,7 +342,7 @@ for ($i = 0; $i < 10; $i++) {
 
 *With the default fold text:*
 ```
-+-- 3 lines: for ($i = 0; $i < 10; $i++) {---
++--  3 lines: for ($i = 0; $i < 10; $i++) {---
 ```
 
 *With the plugin's fold text:*
@@ -361,7 +361,7 @@ foreach ($iterable as $key => $value) {
 
 *With the default fold text:*
 ```
-+-- 3 lines: foreach ($iterable as $key => $value) {---
++--  3 lines: foreach ($iterable as $key => $value) {---
 ```
 
 *With the plugin's fold text:*
@@ -418,7 +418,7 @@ try {
 
 *With the default fold text:*
 ```
-+-- 7 lines: try { ---
++--  7 lines: try { ---
 ```
 
 *With the plugin's fold text:*
@@ -446,9 +446,9 @@ $closureWithArgsAndVars = function ($arg1) use ($var1) {
 
 *With the default fold text:*
 ```
-+-- 3 lines: $closureWithNoArgs = function () {--------------------------
++--  3 lines: $closureWithNoArgs = function () {-------------------------
 
-+-- 3 lines: $closureWithArgs = fucntion ($arg1, $arg2) {----------------
++--  3 lines: $closureWithArgs = fucntion ($arg1, $arg2) {---------------
 
 +--  3 lines: $closureWithArgsAndVars = function ($arg1) use ($var1) {---
 ```
@@ -514,28 +514,28 @@ $shortArgs_longVars = function ($arg) use (
 
 *With the default fold text:*
 ```
-+-- 7 lines: $longArgss_noVars = function (----------------
++--  7 lines: $longArgss_noVars = function (----------------
 
-+-- 7 lines: $lnoArgs_longVars = function () use (---------
++--  7 lines: $lnoArgs_longVars = function () use (---------
 
-+-- 11 lines: $longArgs_longVars = function (--------------
++-- 11 lines: $longArgs_longVars = function (---------------
 
-+-- 7 lines: $longArgs_shortVars = function (--------------
++--  7 lines: $longArgs_shortVars = function (--------------
 
-+-- 7 lines: $shortArgs_longVars = function ($arg) use (---
++--  7 lines: $shortArgs_longVars = function ($arg) use (---
 ```
 
 *With the plugin's fold text:*
 ```
-+- 7 lines: $longArgs_noVars = function (...) {...};------------------
++-  7 lines: $longArgs_noVars = function (...) {...};------------------
+-
++-  7 lines: $noArgs_longVars = function () use (...) {...};-----------
 
-+- 7 lines: $noArgs_longVars = function () use (...) {...};-----------
++- 11 lines: $longArgs_longVars = function (...) use (...) {...};------
 
-+- 11 lines: $longArgs_longVars = function (...) use (...) {...};-----
++-  7 lines: $longArgs_shortVars = function (...) use ($var1) {...};---
 
-+- 7 lines: $longArgs_shortVars = function (...) use ($var1) {...};---
-
-+- 7 lines: $shortArgs_longVars = function ($arg) use (...) {...};----
++-  7 lines: $shortArgs_longVars = function ($arg) use (...) {...};----
 ```
 
 ### Arrays
@@ -592,7 +592,7 @@ When `b:phpfold_docblocks` is enabled and `b:phpfold_doc_with_funcs` is disabled
 
 *With the plugin's fold text:*
 ```
-+- 3 lines: Summary information.---
++- 3 lines: Summary information.--------------------------
 
 +- 4 lines: DocBlock Summary that spans multiple lines.---
 ```
@@ -617,7 +617,7 @@ class ClassName
 ```
 class ClassName
 {
-+-- 7 lines: /**----
++--  7 lines: /**----
 }
 ```
 
