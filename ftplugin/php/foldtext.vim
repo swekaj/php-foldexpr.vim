@@ -108,6 +108,10 @@ function! GetPhpFoldText()
     elseif line =~? '\v^\s*default:'
         " Remove any leading or trailing whitespace around default:
         let text .= 'default: '
+    elseif line =~? '\v^\s*do \{'
+        let text .= substitute(line, '\v^\s*', '', '')
+        let text .= '...'
+        let text .= substitute(getline(v:foldend), '\v^\s*', '', '')
     else
         " Handle simple folds such as arrays and stand-alone function declarations.
         let text .= substitute(line, '\v[ }]*(.{-})\s*(\S*)$', '\1 \2', '')
