@@ -23,14 +23,19 @@ function! GetPhpFoldText()
         if b:phpfold_doc_with_funcs
             let funcline = FindNextFunc(v:foldstart)
             if funcline > 0
-                let text .= ExtractFuncName(funcline) . '{...} - '
+                let text .= ExtractFuncName(funcline) . '{...}'
             endif
         endif
         " Display the docblock summary, if it's one two lines attempt to display both lines for the entire summary.
         let nline = getline(v:foldstart+1)
-        let text .= substitute(nline, '\v\s*\*(\s|\*)*', '', '')
-        if nline !~? '\v\.$'
-            let text .= substitute(getline(v:foldstart+2), '\v\s*\*(.{-}\.)\s*.*', '\1', '')
+        if nline =~? '\v^\s*\*\s+[^@]'
+            let text .= ' - '.substitute(nline, '\v\s*\*(\s|\*)*', '', '')
+            if nline !~? '\v\.$'
+                let n2line = getline(v:foldstart+2)
+                if n2line =~? '\v\.(\s|$)'
+                    let text .= substitute(getline(v:foldstart+2), '\v\s*\*(.{-}\.)\s*.*', '\1', '')
+                endif 
+            endif
         endif
     elseif line =~? '\v\s*(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function\s+\k'
         " Name functions and methods
