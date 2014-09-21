@@ -131,7 +131,7 @@ class ClassName
 ```
 class ClassName
 {
-    public fucntion aVeryLongMethodName(
+    public function aVeryLongMethodName(
 +----  3 lines: ClassTypeHint $arg1,------
     ) {
         // method body
@@ -143,7 +143,7 @@ class ClassName
 ```
 class ClassName
 {
-    public fucntion aVeryLongMethodName(
+    public function aVeryLongMethodName(
 +--- 3 lines: ClassTypeHint $arg1, &$arg2, array $arg3 = []---
     ) {
         // method body
@@ -448,7 +448,7 @@ $closureWithArgsAndVars = function ($arg1) use ($var1) {
 ```
 +--  3 lines: $closureWithNoArgs = function () {-------------------------
 
-+--  3 lines: $closureWithArgs = fucntion ($arg1, $arg2) {---------------
++--  3 lines: $closureWithArgs = function ($arg1, $arg2) {---------------
 
 +--  3 lines: $closureWithArgsAndVars = function ($arg1) use ($var1) {---
 ```
