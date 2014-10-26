@@ -4,7 +4,9 @@
 " Maintainer: Jake Soward <swekaj@gmail.com>
 "
 " Options: 
-"           b:phpfold_text = 1 - Enable custom foldtext() function
+"           b:phpfold_text             = 1 - Enable custom foldtext() function
+"           b:phpfold_text_right_lines = 0 - Display the line count on the right
+"                                            instead of the left.
 "
 if exists('b:phpfold_text') && !b:phpfold_text
     finish
@@ -12,11 +14,14 @@ endif
 
 setlocal foldtext=GetPhpFoldText()
 
+if !exists('b:phpfold_text_right_lines')
+    let b:phpfold_text_right_lines = 0
+endif
+
 function! GetPhpFoldText()
     let line = getline(v:foldstart)
 
-    " Start off with the normal, the fold-level dashes and number of lines in the fold.
-    let text = '+' . v:folddashes . ' ' . (v:foldend-v:foldstart+1) . ' lines: '
+    let text = ''
 
     if line =~? '\v^\s*/\*\*?\s*$' " Comments
         " If the DocBlocks are being folded with the function they document, include the function signature in the foldtext.
@@ -129,7 +134,63 @@ function! GetPhpFoldText()
         endif
     endif
 
+    let lines = v:foldend-v:foldstart+1
+
+    " Start off with the normal, the fold-level dashes and number of lines in the fold.
+    if !b:phpfold_text_right_lines
+        let text = '+' . v:folddashes . ' ' . lines . ' lines' . ': ' . text
+    else
+        " Place the fold-level dashes and number of lines in fold on the right
+
+        " First, add the indentation back to the text, makes it look nicer.
+        let text = substitute(line, '\S.*', '', '') . text
+
+        " Determine whether the signs column is being displayed.  The
+        " `sign place` command will list all signs placed, or just
+        " '^@--- Signs ---^@' if no signs are placed.
+        redir => signs
+        silent execute "sign place buffer=" . bufnr("%")
+        redir END
+        let signsWidth = strchars(signs) > 15 ? 2 : 0
+
+        " The amount of space we have to display text: window width less fold
+        " column width,  number column width, and the signs column.
+        let displayWidth = winwidth(0) - &foldcolumn - NumColWidth() - signsWidth
+
+        " The text to display on the right
+        let endtext = ' ' . lines . ' lines' . ' +' . v:folddashes
+
+        " Amount of space for text less the line count and fold level dashes
+        let availableWidth = displayWidth - strwidth(endtext)
+
+        " Make sure the display text doesn't need to be truncated.
+        if strwidth(text) > availableWidth
+            let text = strpart(text, 0, availableWidth-2) . ' -' . endtext
+        else
+            let filler = repeat('-', displayWidth - strwidth(text . endtext))
+            let text .= filler . endtext
+        endif
+    endif
+
     return text
+endfunction
+
+" Finds how many characters wide the number column is
+function! NumColWidth()
+    " If neither numbers nor relative numbers are shown, width is 0
+    if !&number && !&relativenumber
+        return 0
+    endif
+
+    let lines = line('$')
+    let width = 9
+    let minwidth = &numberwidth
+
+    while (lines / float2nr(pow(10, width-2))) == 0 && width > minwidth
+        let width = width - 1
+    endwhile
+
+    return width
 endfunction
 
 " Finds the next line that has a function declaration.  Limit search to the folded region.
