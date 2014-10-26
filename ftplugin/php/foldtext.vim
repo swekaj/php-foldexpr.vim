@@ -7,6 +7,8 @@
 "           b:phpfold_text             = 1 - Enable custom foldtext() function
 "           b:phpfold_text_right_lines = 0 - Display the line count on the right
 "                                            instead of the left.
+"           b:phpfold_text_percent     = 0 - Display the percentage of lines the
+"                                            fold represents.
 "
 if exists('b:phpfold_text') && !b:phpfold_text
     finish
@@ -16,6 +18,10 @@ setlocal foldtext=GetPhpFoldText()
 
 if !exists('b:phpfold_text_right_lines')
     let b:phpfold_text_right_lines = 0
+endif
+
+if !exists('b:phpfold_text_percent')
+    let b:phpfold_text_percent = 0
 endif
 
 function! GetPhpFoldText()
@@ -136,9 +142,14 @@ function! GetPhpFoldText()
 
     let lines = v:foldend-v:foldstart+1
 
+    let percentage = ''
+    if b:phpfold_text_percent
+        let percentage = printf(" [% 4.1f%%]", (lines*1.0)/line('$')*100)
+    endif
+
     " Start off with the normal, the fold-level dashes and number of lines in the fold.
     if !b:phpfold_text_right_lines
-        let text = '+' . v:folddashes . ' ' . lines . ' lines' . ': ' . text
+        let text = '+' . v:folddashes . ' ' . lines . ' lines' . percentage . ': ' . text
     else
         " Place the fold-level dashes and number of lines in fold on the right
 
@@ -158,7 +169,7 @@ function! GetPhpFoldText()
         let displayWidth = winwidth(0) - &foldcolumn - NumColWidth() - signsWidth
 
         " The text to display on the right
-        let endtext = ' ' . lines . ' lines' . ' +' . v:folddashes
+        let endtext = ' ' . lines . ' lines' . percentage . ' +' . v:folddashes
 
         " Amount of space for text less the line count and fold level dashes
         let availableWidth = displayWidth - strwidth(endtext)
