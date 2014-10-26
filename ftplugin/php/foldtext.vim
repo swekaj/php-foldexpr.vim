@@ -147,9 +147,11 @@ function! GetPhpFoldText()
         let percentage = printf(" [% 4.1f%%]", (lines*1.0)/line('$')*100)
     endif
 
+    let endtext = printf(" % *d lines", NumColWidth(1), lines)
+
     " Start off with the normal, the fold-level dashes and number of lines in the fold.
     if !b:phpfold_text_right_lines
-        let text = '+' . v:folddashes . ' ' . lines . ' lines' . percentage . ': ' . text
+        let text = '+' . v:folddashes . endtext . percentage . ': ' . text
     else
         " Place the fold-level dashes and number of lines in fold on the right
 
@@ -169,7 +171,7 @@ function! GetPhpFoldText()
         let displayWidth = winwidth(0) - &foldcolumn - NumColWidth() - signsWidth
 
         " The text to display on the right
-        let endtext = ' ' . lines . ' lines' . percentage . ' +' . v:folddashes
+        let endtext .= percentage . ' +' . v:folddashes
 
         " Amount of space for text less the line count and fold level dashes
         let availableWidth = displayWidth - strwidth(endtext)
@@ -186,16 +188,19 @@ function! GetPhpFoldText()
     return text
 endfunction
 
-" Finds how many characters wide the number column is
-function! NumColWidth()
-    " If neither numbers nor relative numbers are shown, width is 0
-    if !&number && !&relativenumber
+" Finds how many characters wide the number column is.
+function! NumColWidth(...)
+    let ignorenuwidth = a:0 > 0 ? a:1 : 0
+
+    " If neither numbers nor relative numbers are shown and not ignore number
+    " column width, width is 0
+    if !&number && !&relativenumber && !ignorenuwidth
         return 0
     endif
 
     let lines = line('$')
     let width = 9
-    let minwidth = &numberwidth
+    let minwidth = ignorenuwidth ? 1 : &numberwidth
 
     while (lines / float2nr(pow(10, width-2))) == 0 && width > minwidth
         let width = width - 1
