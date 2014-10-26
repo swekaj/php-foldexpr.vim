@@ -14,6 +14,8 @@ Configuration
 - `b:phpfold_docblocks = 1` - Fold DocBlocks.
 - `b:phpfold_doc_with_funcs = 1` - Fold DocBlocks. Overrides `b:phpfold_docblocks`.
 - `b:phpfold_text = 1` - Enable the custom `foldtext` option.
+- `b:phpfold_text_right_lines = 1` - Display the line count on the right instead of the left.
+- `b:phpfold_text_percent = 0` - Display the percentage of lines the fold represents.
 
 Installation
 ------------
@@ -31,6 +33,53 @@ Installation
 - [vim-plug](https://github.com/junegunn/vim-plug)
   1. Add `Plug 'swekaj/php-foldexpr.vim'` to .vimrc
   2. Run `:PlugInstall`
+
+Option Effects
+--------------
+There are two options for customizing how the fold text displays: `b:phpfold_text_right_lines` and `b:phpfold_text_percent`.
+
+When `b:phpfold_text_right_lines` is true, the number of lines folded along with the dashes that indicate the fold level are aligned on the right side of the screen.
+*`b:phpfold_text_right_lines = 0`:*
+```
+class ClassName
+{
++--  4 lines: public foo() {...}-------------------------------------------
++--  6 lines: public bar() {...}-------------------------------------------
++-- 12 lines: public baz() {...}-------------------------------------------
+}
+```
+
+*`b:phpfold_text_right_lines = 1`:*
+```
+class ClassName
+{
+    public foo() {...}----------------------------------------  4 lines +--
+    public bar() {...}----------------------------------------  6 lines +--
+    public baz() {...}---------------------------------------- 12 lines +--
+}
+```
+
+When `b:phpfold_text_percent` is true, the percentage of the total lines the fold represents is displayed alongside the line count:
+*`b:phpfold_text_right_lines = 0`:*
+```
+class ClassName
+{
++--  2 lines [ 8%]: public foo() {...}-------------------------------------
++--  8 lines [32%]: public bar() {...}-------------------------------------
++-- 12 lines [48%]: public baz() {...}-------------------------------------
+}
+```
+
+*`b:phpfold_text_right_lines = 1`:*
+```
+class ClassName
+{
+    public foo() {...}----------------------------------  2 lines [ 8%] +--
+    public bar() {...}----------------------------------  8 lines [32%] +--
+    public baz() {...}---------------------------------- 12 lines [48%] +--
+}
+```
+
 
 Folding Examples
 ----------------
