@@ -180,7 +180,7 @@ function! GetPhpFoldText()
         if strwidth(text) > availableWidth
             let text = strpart(text, 0, availableWidth-2) . ' -' . endtext
         else
-            let filler = repeat('-', displayWidth - strwidth(text . endtext))
+            let filler = repeat(matchstr(&fillchars, 'fold:\zs.'), displayWidth - strwidth(text . endtext))
             let text .= filler . endtext
         endif
     endif
