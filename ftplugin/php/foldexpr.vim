@@ -175,8 +175,8 @@ function! GetPhpFold(lnum)
     endif
 
     if getline(a:lnum+1) =~? '\v^\s*}' && (IndentLevel(a:lnum)-IndentLevel(a:lnum+1)) > 1
-       return '<' . IndentLevel(a:lnum)
-   endif
+        return '<' . IndentLevel(a:lnum)
+    endif
 
     return '='
 endfunction
