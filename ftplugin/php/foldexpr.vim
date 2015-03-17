@@ -10,12 +10,14 @@
 "           b:phpfold_group_args = 1     - Group function arguments split across multiple
 "                                          lines into their own fold.
 "           b:phpfold_group_case = 1     - Fold case and default blocks inside switches.
+"           b:phpfold_misc = 1           - Fold multi-line square and normal brackets. () []
+"           b:phpfold_curlies = 1        - Fold within {}.
 "           b:phpfold_heredocs = 1       - Fold HEREDOCs and NOWDOCs.
 "           b:phpfold_docblocks = 1      - Fold DocBlocks.
 "           b:phpfold_doc_with_funcs = 1 - Fold DocBlocks. Overrides b:phpfold_docblocks.
 "
 " Known Bugs:
-"  - In switch statements, the closing } is included in the fold of the last case or 
+"  - In switch statements, the closing } is included in the fold of the last case or
 "    default block.
 setlocal foldmethod=expr
 setlocal foldexpr=GetPhpFold(v:lnum)
@@ -24,7 +26,7 @@ if !exists('b:phpfold_use')
     let b:phpfold_use = 1
 endif
 if !exists('b:phpfold_misc')
-    let b:phpfold_misc = 0
+    let b:phpfold_misc = 1
 endif
 if !exists('b:phpfold_group_iftry')
     let b:phpfold_group_iftry = 0
@@ -87,8 +89,12 @@ function! GetPhpFold(lnum)
         let nextCurly = FindNextDelimiter(a:lnum, '{')
         return '>' . IndentLevel(nextnonblank(nextCurly + 1))
     elseif line =~? '{' && line !~? '\v^\s*\*'
-        " The fold level of the curly is determined by the next non-blank line
-        return IndentLevel(a:lnum) + 1
+        if b:phpfold_curlies
+          " The fold level of the curly is determined by the next non-blank line
+          return IndentLevel(a:lnum) + 1
+        else
+          return '='
+        endif
     elseif line =~? '\v^\s*\*@!\}(\s*(else|catch|finally))@!'
         " The fold level the closing curly closes is determined by the previous non-blank line
         " But only if not followed by an else, catch, or finally
