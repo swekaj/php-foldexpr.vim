@@ -13,6 +13,7 @@ Configuration
 - `b:phpfold_heredocs = 1` - Fold HEREDOCs and NOWDOCs.
 - `b:phpfold_docblocks = 1` - Fold DocBlocks.
 - `b:phpfold_doc_with_funcs = 1` - Fold DocBlocks. Overrides `b:phpfold_docblocks`.
+- `b:phpfold_misc = 0` - Fold open braces, brackets etc.
 - `b:phpfold_text = 1` - Enable the custom `foldtext` option.
 - `b:phpfold_text_right_lines = 1` - Display the line count on the right instead of the left.
 - `b:phpfold_text_percent = 0` - Display the percentage of lines the fold represents.

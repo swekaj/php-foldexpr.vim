@@ -23,6 +23,9 @@ setlocal foldexpr=GetPhpFold(v:lnum)
 if !exists('b:phpfold_use')
     let b:phpfold_use = 1
 endif
+if !exists('b:phpfold_misc')
+    let b:phpfold_misc = 0
+endif
 if !exists('b:phpfold_group_iftry')
     let b:phpfold_group_iftry = 0
 endif
@@ -129,15 +132,17 @@ function! GetPhpFold(lnum)
     endif
 
     " If the line has an open ( ) or [ ] pair, it probably starts a fold
-    if line =~? '\v(\(|\[)[^\)\]]*$' 
-        if b:phpfold_group_iftry && line =~? '\v}\s*(elseif|catch)'
-            " But don't start a fold if we're grouping if/elseif/else and try/catch
-            return IndentLevel(a:lnum)+1
-        else
-            return 'a1'
-        endif
-    elseif line =~? '\v^\s*([\(\[].*)@!(\)|\])'
-        return 's1'
+    if b:phpfold_misc
+      if line =~? '\v(\(|\[)[^\)\]]*$' 
+          if b:phpfold_group_iftry && line =~? '\v}\s*(elseif|catch)'
+              " But don't start a fold if we're grouping if/elseif/else and try/catch
+              return IndentLevel(a:lnum)+1
+          else
+              return 'a1'
+          endif
+      elseif line =~? '\v^\s*([\(\[].*)@!(\)|\])'
+          return 's1'
+      endif
     endif
 
     " Fold switch case and default blocks together
