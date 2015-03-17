@@ -28,6 +28,9 @@ endif
 if !exists('b:phpfold_brackets')
     let b:phpfold_brackets = 1
 endif
+if !exists('b:phpfold_curlies')
+    let b:phpfold_curlies = 1
+endif
 if !exists('b:phpfold_group_iftry')
     let b:phpfold_group_iftry = 0
 endif
