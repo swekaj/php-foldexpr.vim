@@ -4,24 +4,24 @@
 " Maintainer: Jake Soward <swekaj@gmail.com>
 "
 " Options: 
-"           b:phpfold_text             = 1 - Enable custom foldtext() function
-"           b:phpfold_text_right_lines = 0 - Display the line count on the right
+"           g:phpfold_text             = 1 - Enable custom foldtext() function
+"           g:phpfold_text_right_lines = 0 - Display the line count on the right
 "                                            instead of the left.
-"           b:phpfold_text_percent     = 0 - Display the percentage of lines the
+"           g:phpfold_text_percent     = 0 - Display the percentage of lines the
 "                                            fold represents.
 "
-if exists('b:phpfold_text') && !b:phpfold_text
+if exists('g:phpfold_text') && !g:phpfold_text
     finish
 endif
 
 setlocal foldtext=GetPhpFoldText()
 
-if !exists('b:phpfold_text_right_lines')
-    let b:phpfold_text_right_lines = 0
+if !exists('g:phpfold_text_right_lines')
+    let g:phpfold_text_right_lines = 0
 endif
 
-if !exists('b:phpfold_text_percent')
-    let b:phpfold_text_percent = 0
+if !exists('g:phpfold_text_percent')
+    let g:phpfold_text_percent = 0
 endif
 
 function! GetPhpFoldText()
@@ -31,7 +31,7 @@ function! GetPhpFoldText()
 
     if line =~? '\v^\s*/\*\*?\s*$' " Comments
         " If the DocBlocks are being folded with the function they document, include the function signature in the foldtext.
-        if b:phpfold_doc_with_funcs
+        if g:phpfold_doc_with_funcs
             let funcline = FindNextFunc(v:foldstart)
             if funcline > 0
                 let text .= ExtractFuncName(funcline) . '{...}'
@@ -143,14 +143,14 @@ function! GetPhpFoldText()
     let lines = v:foldend-v:foldstart+1
 
     let percentage = ''
-    if b:phpfold_text_percent
+    if g:phpfold_text_percent
         let percentage = printf(" [% 4.1f%%]", (lines*1.0)/line('$')*100)
     endif
 
     let endtext = printf(" % *d lines", NumColWidth(1), lines)
 
     " Start off with the normal, the fold-level dashes and number of lines in the fold.
-    if !b:phpfold_text_right_lines
+    if !g:phpfold_text_right_lines
         let text = '+' . v:folddashes . endtext . percentage . ': ' . text
     else
         " Place the fold-level dashes and number of lines in fold on the right

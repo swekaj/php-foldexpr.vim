@@ -4,15 +4,15 @@
 " Maintainer: Jake Soward <swekaj@gmail.com>
 "
 " Options: 
-"           b:phpfold_use = 1            - Fold groups of use statements in the global scope.
-"           b:phpfold_group_iftry = 0    - Fold if/elseif/else and try/catch/finally
+"           g:phpfold_use = 1            - Fold groups of use statements in the global scope.
+"           g:phpfold_group_iftry = 0    - Fold if/elseif/else and try/catch/finally
 "                                          blocks as a group, rather than each part separate.
-"           b:phpfold_group_args = 1     - Group function arguments split across multiple
+"           g:phpfold_group_args = 1     - Group function arguments split across multiple
 "                                          lines into their own fold.
-"           b:phpfold_group_case = 1     - Fold case and default blocks inside switches.
-"           b:phpfold_heredocs = 1       - Fold HEREDOCs and NOWDOCs.
-"           b:phpfold_docblocks = 1      - Fold DocBlocks.
-"           b:phpfold_doc_with_funcs = 1 - Fold DocBlocks. Overrides b:phpfold_docblocks.
+"           g:phpfold_group_case = 1     - Fold case and default blocks inside switches.
+"           g:phpfold_heredocs = 1       - Fold HEREDOCs and NOWDOCs.
+"           g:phpfold_docblocks = 1      - Fold DocBlocks.
+"           g:phpfold_doc_with_funcs = 1 - Fold DocBlocks. Overrides g:phpfold_docblocks.
 "
 " Known Bugs:
 "  - In switch statements, the closing } is included in the fold of the last case or 
@@ -20,28 +20,28 @@
 setlocal foldmethod=expr
 setlocal foldexpr=GetPhpFold(v:lnum)
 
-if !exists('b:phpfold_use')
-    let b:phpfold_use = 1
+if !exists('g:phpfold_use')
+    let g:phpfold_use = 1
 endif
-if !exists('b:phpfold_group_iftry')
-    let b:phpfold_group_iftry = 0
+if !exists('g:phpfold_group_iftry')
+    let g:phpfold_group_iftry = 0
 endif
-if !exists('b:phpfold_group_args')
-    let b:phpfold_group_args = 1
+if !exists('g:phpfold_group_args')
+    let g:phpfold_group_args = 1
 endif
-if !exists('b:phpfold_heredocs')
-    let b:phpfold_heredocs = 1
+if !exists('g:phpfold_heredocs')
+    let g:phpfold_heredocs = 1
 endif
-if !exists('b:phpfold_docblocks')
-    let b:phpfold_docblocks = 1
+if !exists('g:phpfold_docblocks')
+    let g:phpfold_docblocks = 1
 endif
-if !exists('b:phpfold_doc_with_funcs')
-    let b:phpfold_doc_with_funcs = 1
+if !exists('g:phpfold_doc_with_funcs')
+    let g:phpfold_doc_with_funcs = 1
 endif
 
 " If we want to fold functions with their blocks, we have to fold the blocks.
-if b:phpfold_doc_with_funcs
-    let b:phpfold_docblocks = 1
+if g:phpfold_doc_with_funcs
+    let g:phpfold_docblocks = 1
 endif
 
 function! GetPhpFold(lnum)
@@ -53,7 +53,7 @@ function! GetPhpFold(lnum)
         return '='
     endif
 
-    if b:phpfold_use
+    if g:phpfold_use
         " Fold blocks of 'use' statements that have no indentation.
         " i.e. namespace imports
         if line =~? '\v^use\s+' && getline(a:lnum+1) =~? '\v^(use\s+)@!'
@@ -66,7 +66,7 @@ function! GetPhpFold(lnum)
 
     " handle class methods and independent functions
     if line =~? '\v\s*(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function\s+(\k|\()' && line !~? ';$'
-        if b:phpfold_doc_with_funcs
+        if g:phpfold_doc_with_funcs
             return IndentLevel(a:lnum)+1
         else
             return '>'.(IndentLevel(a:lnum)+1)
@@ -92,7 +92,7 @@ function! GetPhpFold(lnum)
         return '<' . (IndentLevel(a:lnum)+1)
     endif
 
-    if !b:phpfold_group_iftry
+    if !g:phpfold_group_iftry
         " If the next line is followed by an opening else, catch, or finally statement, then this 
         " line closes the current fold so that the else/catch/finally can open a new one.
         if getline(a:lnum+1) =~? '\v}\s*(else|catch|finally)'
@@ -100,14 +100,14 @@ function! GetPhpFold(lnum)
         endif
     endif
 
-    if b:phpfold_docblocks
+    if g:phpfold_docblocks
         " Cause indented multi-line comments (/* */) to be folded.
         if line =~? '\v^\s*/\*\*' && line !~? '\*/'
             return '>'.(IndentLevel(a:lnum)+1)
         elseif line =~? '\v^\s*\*/@!' && IsDocBlock(a:lnum-1)
             return IndentLevel(a:lnum)+1
         elseif line =~? '\v^\s*\*/'
-            if b:phpfold_doc_with_funcs && getline(a:lnum+1) =~?  '\v\s*(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function\s+(\k|\()'
+            if g:phpfold_doc_with_funcs && getline(a:lnum+1) =~?  '\v\s*(abstract\s+|public\s+|private\s+|static\s+|private\s+)*function\s+(\k|\()'
                 return IndentLevel(a:lnum)+1
             else
                 return '<' . (IndentLevel(a:lnum)+1)
@@ -115,7 +115,7 @@ function! GetPhpFold(lnum)
         endif
     endif
 
-    if b:phpfold_group_args
+    if g:phpfold_group_args
         " Increase the foldlevel by 1 for function and closure arguments and use vars that are on
         " multiple lines.
         let prevClassFunc = FindPrevClassFunc(a:lnum)
@@ -130,7 +130,7 @@ function! GetPhpFold(lnum)
 
     " If the line has an open ( ) or [ ] pair, it probably starts a fold
     if line =~? '\v(\(|\[)[^\)\]]*$' 
-        if b:phpfold_group_iftry && line =~? '\v}\s*(elseif|catch)'
+        if g:phpfold_group_iftry && line =~? '\v}\s*(elseif|catch)'
             " But don't start a fold if we're grouping if/elseif/else and try/catch
             return IndentLevel(a:lnum)+1
         else
@@ -151,7 +151,7 @@ function! GetPhpFold(lnum)
         endif
     endif
 
-    if b:phpfold_heredocs
+    if g:phpfold_heredocs
         " Fold the here and now docs
         if line =~? "<<<[a-zA-Z_][a-zA-Z0-9_]*$"
             return '>'.(IndentLevel(a:lnum)+1)

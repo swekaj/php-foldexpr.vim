@@ -6,16 +6,16 @@ Vim folding for PHP with `foldexpr`
 Configuration
 -------------
 
-- `b:phpfold_use = 1` - Fold groups of use statements in the global scope.
-- `b:phpfold_group_iftry = 0` - Fold if/elseif/else and try/catch/finally blocks as a group, rather than each part separate.
-- `b:phpfold_group_args = 1` - Group function arguments split across multiple lines into their own fold.
-- `b:phpfold_group_case = 1` - Fold case and default blocks inside switches.
-- `b:phpfold_heredocs = 1` - Fold HEREDOCs and NOWDOCs.
-- `b:phpfold_docblocks = 1` - Fold DocBlocks.
-- `b:phpfold_doc_with_funcs = 1` - Fold DocBlocks. Overrides `b:phpfold_docblocks`.
-- `b:phpfold_text = 1` - Enable the custom `foldtext` option.
-- `b:phpfold_text_right_lines = 1` - Display the line count on the right instead of the left.
-- `b:phpfold_text_percent = 0` - Display the percentage of lines the fold represents.
+- `g:phpfold_use = 1` - Fold groups of use statements in the global scope.
+- `g:phpfold_group_iftry = 0` - Fold if/elseif/else and try/catch/finally blocks as a group, rather than each part separate.
+- `g:phpfold_group_args = 1` - Group function arguments split across multiple lines into their own fold.
+- `g:phpfold_group_case = 1` - Fold case and default blocks inside switches.
+- `g:phpfold_heredocs = 1` - Fold HEREDOCs and NOWDOCs.
+- `g:phpfold_docblocks = 1` - Fold DocBlocks.
+- `g:phpfold_doc_with_funcs = 1` - Fold DocBlocks. Overrides `g:phpfold_docblocks`.
+- `g:phpfold_text = 1` - Enable the custom `foldtext` option.
+- `g:phpfold_text_right_lines = 1` - Display the line count on the right instead of the left.
+- `g:phpfold_text_percent = 0` - Display the percentage of lines the fold represents.
 
 Installation
 ------------
@@ -36,10 +36,10 @@ Installation
 
 Option Effects
 --------------
-There are two options for customizing how the fold text displays: `b:phpfold_text_right_lines` and `b:phpfold_text_percent`.
+There are two options for customizing how the fold text displays: `g:phpfold_text_right_lines` and `g:phpfold_text_percent`.
 
-When `b:phpfold_text_right_lines` is true, the number of lines folded along with the dashes that indicate the fold level are aligned on the right side of the screen.
-*`b:phpfold_text_right_lines = 0`:*
+When `g:phpfold_text_right_lines` is true, the number of lines folded along with the dashes that indicate the fold level are aligned on the right side of the screen.
+*`g:phpfold_text_right_lines = 0`:*
 ```
 class ClassName
 {
@@ -49,7 +49,7 @@ class ClassName
 }
 ```
 
-*`b:phpfold_text_right_lines = 1`:*
+*`g:phpfold_text_right_lines = 1`:*
 ```
 class ClassName
 {
@@ -59,8 +59,8 @@ class ClassName
 }
 ```
 
-When `b:phpfold_text_percent` is true, the percentage of the total lines the fold represents is displayed alongside the line count:
-*`b:phpfold_text_right_lines = 0`:*
+When `g:phpfold_text_percent` is true, the percentage of the total lines the fold represents is displayed alongside the line count:
+*`g:phpfold_text_right_lines = 0`:*
 ```
 class ClassName
 {
@@ -70,7 +70,7 @@ class ClassName
 }
 ```
 
-*`b:phpfold_text_right_lines = 1`:*
+*`g:phpfold_text_right_lines = 1`:*
 ```
 class ClassName
 {
@@ -85,7 +85,7 @@ Folding Examples
 ----------------
 
 ### Namespaces alias and imports
-When `b:phpfold_use` is enabled, consecutive `use` statements become folded.
+When `g:phpfold_use` is enabled, consecutive `use` statements become folded.
 
 *Given:*
 ```
@@ -129,7 +129,7 @@ class ClassName extends ParentClass implements
 ```
 
 ### Methods
-When `b:phpfold_doc_with_funcs` is false, methods are folded from the `function` keyword to the method's closing `}`.
+When `g:phpfold_doc_with_funcs` is false, methods are folded from the `function` keyword to the method's closing `}`.
 
 *Given:*
 ```
@@ -158,10 +158,10 @@ class ClassName
 }
 ```
 
-See [DocBlocks] for how `b:phpfold_doc_with_funcs` works when true.
+See [DocBlocks] for how `g:phpfold_doc_with_funcs` works when true.
 
 ### Method Arguments
-When method arguments are listed on multiple lines and `b:phpfold_group_args` is true, the argument list is folded an additional level.
+When method arguments are listed on multiple lines and `g:phpfold_group_args` is true, the argument list is folded an additional level.
 
 *Given:*
 ```
@@ -223,7 +223,7 @@ $foo->bar(
 ```
 
 ### If...Elseif...Else Statements
-When `b:phpfold_group_iftry` is false, `if`, `elseif`, and `else` statements are folded individually.
+When `g:phpfold_group_iftry` is false, `if`, `elseif`, and `else` statements are folded individually.
 
 *Given:*
 ```
@@ -250,7 +250,7 @@ if ($expr1) {
 +- 3 lines: else {...}--------------
 ```
 
-When `b:phpfold_group_iftry` is true, `if`, `elseif`, and `else` statements are folded as a group.
+When `g:phpfold_group_iftry` is true, `if`, `elseif`, and `else` statements are folded as a group.
 
 *Given:*
 ```
@@ -419,7 +419,7 @@ foreach ($iterable as $key => $value) {
 ```
 
 ### Try, Catch
-When `b:phpfold_group_iftry` is false, `try`, `catch`, and `finally` statements are folded individually.
+When `g:phpfold_group_iftry` is false, `try`, `catch`, and `finally` statements are folded individually.
 
 *Given:*
 ```
@@ -450,7 +450,7 @@ try {
 +- 3 lines: finally {...}--------------------------
 ```
 
-When `b:phpfold_group_iftry` is true, `try`, `catch`, and `finally` statements are folded as a group.
+When `g:phpfold_group_iftry` is true, `try`, `catch`, and `finally` statements are folded as a group.
 
 *Given:*
 ```
@@ -512,7 +512,7 @@ $closureWithArgsAndVars = function ($arg1) use ($var1) {
 ```
 
 ### Closure Arguments and Variables
-If `b:phpfold_group_args` is true, then when argument and variable lists are split across multiple lines they are folded an additional level individually.
+If `g:phpfold_group_args` is true, then when argument and variable lists are split across multiple lines they are folded an additional level individually.
 
 *Given:*
 ```
@@ -618,7 +618,7 @@ $array = [
 ```
 
 ### DockBlocks
-When `b:phpfold_docblocks` is enabled and `b:phpfold_doc_with_funcs` is disabled `/** */` comment blocks are folded from the `/**` to the `*/`.
+When `g:phpfold_docblocks` is enabled and `g:phpfold_doc_with_funcs` is disabled `/** */` comment blocks are folded from the `/**` to the `*/`.
 
 *Given:*
 ```
@@ -646,7 +646,7 @@ When `b:phpfold_docblocks` is enabled and `b:phpfold_doc_with_funcs` is disabled
 +- 4 lines: DocBlock Summary that spans multiple lines.---
 ```
 
-If `b:phpfold_doc_with_funcs` is enabled, the fold begins with `/**` and ends with the function's `}`.
+If `g:phpfold_doc_with_funcs` is enabled, the fold begins with `/**` and ends with the function's `}`.
 
 *Given:*
 ```
